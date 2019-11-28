@@ -8,7 +8,7 @@ bool ip_file_handler::file_to_ip_packets(std::string input_file_name, std::strin
 	std::fstream fout;
 	char* buffer= NULL;
 	int length= read_file_to_buffer( buffer,input_file_name);
-	Ipv4Header* header = new Ipv4Header(source_ip,destination_ip,FULL_SIZE);
+	//Ipv4Header* header = new Ipv4Header(source_ip,destination_ip,FULL_SIZE);
 
 
 	fout.open(output_file_name, ios::out | ios::binary);
@@ -18,7 +18,7 @@ bool ip_file_handler::file_to_ip_packets(std::string input_file_name, std::strin
 	for(int i=0;  i<full_packets_count-1;  i++)
 	{
 		//write header to file
-		header->write_header();//this function should receive an output file name &  write header to file;
+		//header->write_header();//this function should receive an output file name &  write header to file;
 		//write  256 bytes to file
 		fout.write(buffer+i*FULL_SIZE, FULL_SIZE);
 
@@ -26,9 +26,9 @@ bool ip_file_handler::file_to_ip_packets(std::string input_file_name, std::strin
 //check if there is  reminder
 	//here :  making header with remainder data length
 	int reminder_size = (length - full_packets_count*FULL_SIZE);
-	Ipv4Header* last_header = new Ipv4Header(source_ip,destination_ip,reminder_size);
+	//Ipv4Header* last_header = new Ipv4Header(source_ip,destination_ip,reminder_size);
 	//write header to file
-	last_header->write_header();
+	//last_header->write_header();
 	// write reminder data to file
 	fout.write(buffer+full_packets_count*FULL_SIZE ,length%FULL_SIZE);
 	fout.close();

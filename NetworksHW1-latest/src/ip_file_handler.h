@@ -1,7 +1,7 @@
 #ifndef IP_FILE_HANDLER_H_
 #define IP_FILE_HANDLER_H_
 
-#include "ip_header.h"
+#include "TempIp.h"
 
 #include<iostream>
 using namespace std;
