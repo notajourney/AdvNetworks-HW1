@@ -61,7 +61,51 @@ bool ip_file_handler::file_to_ip_packets(std::string input_file_name, std::strin
 }
 
 bool ip_file_handler::ip_packets_to_file (std::string input_file_name, std::string output_file_name, unsigned int source_ip, unsigned int destination_ip){
-	return true;
+	unsigned char arr[20];
+		char buffer[250];
+		ifstream f_read;
+		ofstream f_write;
+		f_read.open(input_file_name);
+		f_write.open(output_file_name);
+		if ( !f_read.is_open() || !f_write.is_open() )
+			return false;
+		// read all the file
+		while ( !f_read.eof() ) {
+			// we know that header is 20 bytes in a row so letsr read it
+			for ( int i=0; i<20; i++ )
+				f_read >> arr[i];
+			// save in packs of 16 bits
+			unsigned short int tmp[10];
+			for( int i=0; i<10; i++ )
+				tmp[i] = 0;
+			for( int i=0; i<10; i++ ) {
+				tmp[i] = arr[i*2];
+				tmp[i] = tmp[i]<<8;
+				tmp[i] = tmp[i] | arr[i*2+1];
+			}
+			// checksum
+			unsigned short int checksum = 0;
+			for( int i=0; i<10; i++ )
+				checksum += tmp[i];
+			if (checksum != 0xffff)
+				return false;
+			// chek ip
+			unsigned int sourse = tmp[6];
+			sourse = sourse<<16;
+			sourse = sourse | tmp[7];
+			unsigned int destination = tmp[8];
+			destination = destination<<16;
+			destination = destination | tmp[9];
+			if ( sourse != source_ip || destination != destination_ip )
+				return false;
+			// read and write data
+			f_read >> buffer;
+			f_write << buffer;
+		}
+
+		f_read.close();
+		f_write.close();
+		return true;
 }//TODO :ip_file_handler::ip_packets_to_file
 
 

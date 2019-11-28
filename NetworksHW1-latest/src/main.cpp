@@ -2,17 +2,18 @@
 #include <iostream>
 
 #include "TempIp.h"
+#include"ip_file_handler.h"
 
 using namespace std;
 int main() {
-//	Ipv4Header tmp(0x01020304,0x05060708,0);
-//	tmp.write_header();
-//
-//	/* the program */
-//	ip_file_handler::file_to_ip_packets("test.txt","output.bin",0x01020304,0x05060708);
-//	ip_file_handler::ip_packets_to_file("output.bin","check.txt",0x01020304,0x05060708);
-//
+	//Ipv4Header tmp(0x01020304,0x05060708,0);
+	//tmp.write_header();
 
+	/* the program */
+	ip_file_handler::file_to_ip_packets("test.txt","output.bin",0x01020304,0x05060708);
+	ip_file_handler::ip_packets_to_file("output.bin","check.txt",0x01020304,0x05060708);
+
+/*
 	unsigned int a = 0x12345678;
 	unsigned char *lol = (unsigned char*) &a;
 	//TempIp s;
@@ -27,7 +28,7 @@ int main() {
 	for (int i = 3; i >= 0; i--) {
 		cout << setw(2) << setfill('0') << hex << (unsigned int) *(lol + i)<< ' ';
 	}
-	cout << endl;
+	cout << endl;*/
 	return 0;
 }
 
