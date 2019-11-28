@@ -93,8 +93,14 @@ public:
 
 	char* get_header_as_bytes()
 	{
-		return this->header;
-	}//simply get header and write it to file
+		//'header_copy' is not destroyed if 'this' destroyed
+		char* header_copy = new char[20];
+		for (int i = 0; i < 20; ++i) {
+
+			header_copy[i]=header[i];
+		}
+		return header_copy;
+	}//TODO:free memory of header_copy
 
 	unsigned short int get_total_length() {
 		return bytes_to_shortInteger(header + 2, 1);

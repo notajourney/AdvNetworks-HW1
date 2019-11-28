@@ -4,42 +4,67 @@ using namespace std;
 
 bool ip_file_handler::file_to_ip_packets(std::string input_file_name, std::string output_file_name, unsigned int source_ip, unsigned int destination_ip){
 
-	const int FULL_SIZE = 256;
+	const unsigned int FULL_SIZE = 256;
+	const unsigned int HEADER_SIZE = 20;
 	std::fstream fout;
 	char* buffer= NULL;
-	int length= read_file_to_buffer( buffer,input_file_name);
-	//Ipv4Header* header = new Ipv4Header(source_ip,destination_ip,FULL_SIZE);
-
-
 	fout.open(output_file_name, ios::out | ios::binary);
-	int full_packets_count = (length/FULL_SIZE);
+	char* header_bytes = NULL;
+	char* last_header_bytes = NULL;
+	unsigned int file_length= read_file_to_buffer( buffer,input_file_name);
 
 
-	for(int i=0;  i<full_packets_count-1;  i++)
+	if(file_length == 0)
 	{
-		//write header to file
-		//header->write_header();//this function should receive an output file name &  write header to file;
-		//write  256 bytes to file
-		fout.write(buffer+i*FULL_SIZE, FULL_SIZE);
-
+		cout<<"File: "<<input_file_name<<" is empty. ";
+		cout<<"Nothing to do (or home exercise was not properly defined"<<endl;
+		return false;
 	}
-//check if there is  reminder
-	//here :  making header with remainder data length
-	int reminder_size = (length - full_packets_count*FULL_SIZE);
-	//Ipv4Header* last_header = new Ipv4Header(source_ip,destination_ip,reminder_size);
-	//write header to file
-	//last_header->write_header();
-	// write reminder data to file
-	fout.write(buffer+full_packets_count*FULL_SIZE ,length%FULL_SIZE);
+
+	int full_packets_count = (file_length/FULL_SIZE);//Number of 256 Fragments
+	if(file_length>=FULL_SIZE)
+
+	{
+
+		for(int i=0;  i<full_packets_count-1;  i++)//Happens only if file_size > 256
+			//Loop writes only 256 fragments
+		{
+			if(i==0){
+				TempIp header(source_ip, destination_ip,FULL_SIZE);
+				header_bytes = header.get_header_as_bytes();
+			}
+
+			fout.write(header_bytes, HEADER_SIZE);
+			fout.write(buffer+i*FULL_SIZE, FULL_SIZE);
+		}
+		delete []header_bytes;
+	}//end if:file_length>=FULL_SIZE
+
+
+	//calculate the number of bytes reminder
+	int reminder_size = (file_length%FULL_SIZE);
+	if(reminder_size > 0)//write reminding bytes if there are any
+	{
+		TempIp last_header(source_ip, destination_ip,reminder_size);
+		last_header_bytes = last_header.get_header_as_bytes();
+		//write  last header and last bytes to file
+		fout.write(last_header_bytes, HEADER_SIZE);
+		fout.write(buffer+full_packets_count*FULL_SIZE-1, reminder_size);//TODO: i doubt this logic
+		//fout.write(buffer+full_packets_count*FULL_SIZE ,length%FULL_SIZE);//or this?
+	}
+
 	fout.close();
 	delete []buffer;
+	delete []last_header_bytes;
 
 	return true;
 }
 
 bool ip_file_handler::ip_packets_to_file (std::string input_file_name, std::string output_file_name, unsigned int source_ip, unsigned int destination_ip){
 	return true;
-}
+}//TODO :ip_file_handler::ip_packets_to_file
+
+
 
 //****************************************************Private Functions*******************************************//
 
