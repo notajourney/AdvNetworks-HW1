@@ -2,7 +2,7 @@
 #define TEMPIP_H_
 #include<iostream>
 using namespace std;
-
+//last//
 class TempIp {
 
 	char header[20];
