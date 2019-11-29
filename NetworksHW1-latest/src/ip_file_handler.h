@@ -15,7 +15,7 @@ public:
 	static bool ip_packets_to_file (std::string input_file_name, std::string output_file_name, unsigned int source_ip, unsigned int destination_ip);
 
 private:
-	static int read_file_to_buffer(char* buffer, std::string input_file_name);
+	static int read_file_to_buffer(char* &buffer, std::string input_file_name);
 
 };
 

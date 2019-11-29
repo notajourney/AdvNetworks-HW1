@@ -232,7 +232,6 @@ private:
 
 	}
 
-
 };
 
 #endif /* TEMPIP_H_ */
