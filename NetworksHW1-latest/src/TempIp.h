@@ -6,6 +6,8 @@ using namespace std;
 class TempIp {
 
 	char header[20];
+
+private:
 	TempIp(){}//default constructor is disabled
 
 public:
@@ -36,7 +38,7 @@ public:
 
 		for (int i = 0; i < 20; ++i) header[i] =0;
 		for (int i = 0; i < 20; ++i) header[i] = header_from_file[i];
-	}//simply read 20 bytes from file and the whole header is initialized and functioning!
+	}//simply read 20 bytes from file and the whole header is initialized and class is functioning!
 
 
 
@@ -49,11 +51,11 @@ public:
 	} //byte#2
 
 	void set_total_length(short int data_size) {
+
 		unsigned short int total_length = data_size + 20;
 		little_to_bigEndian(header + 2, &total_length, 2);
 
-		//byte#3+byte#4	::data_size +=20  and insert big endian
-	}
+	}//byte#3+byte#4	::data_size +=20  and insert big endian
 
 	void set_identification() {
 		header[4] = 0;
@@ -63,27 +65,28 @@ public:
 	void set_flags_offset() {
 		header[6] = 0;
 		header[7] = 0;
-
 	} //byte#7+byte#8
 
 
 	void set_TTL() {
-		header[8] = 0b11001000; //byte#9
-	}
+
+		header[8] = 0b11001000;
+	}//byte#9
 
 	void set_protocol() {
-		header[9] = 0b10001111;//byte#10
-	}
+		header[9] = 0b10001111;//143
+	}//byte#10
+
 	void set_header_checksum(unsigned short int check_sum = 0) {
 		unsigned short int checksum = check_sum;
-		little_to_bigEndian(header + 10, &checksum, 2); //byte#11+byte#12 ::zero by default- updated later big endian
-	}
+		little_to_bigEndian(header + 10, &checksum, 2);
+	}//byte#11+byte#12 ::zero by default TODO:updated later
 
 	void set_source_ip(unsigned long int source_ip) {
 		unsigned long int ip = source_ip;
 		little_to_bigEndian(header + 12, &ip, 4);
-		//byte#13 - byte#16
-	}
+
+	}	//byte#13 - byte#16
 
 	void set_dest_ip(unsigned long int dest_ip) {
 		unsigned long int ip = dest_ip;
@@ -118,10 +121,10 @@ public:
 
 private:
 
-	unsigned short int calculate_checksum(); //TODO
+	unsigned short int calculate_checksum(); //TODO: Implement checksum algorithm
 
 	//****************************************************************************************************//
-	//Copies 'var_size' bytes from 'var_address' to 'target_address' (including 'target_address')
+	//Copies 'var_size' bytes from 'var_address' to 'target_address' (including 'target_address') in big endianess
 	void little_to_bigEndian(char *target_address, void *var_address,unsigned short int var_size) {
 		if (var_size <= 0) {
 			cout << "Nothing to do" << endl;
@@ -135,7 +138,9 @@ private:
 	//****************************************************************************************************//
 
 	//****************************************************************************************************//
-	void big_to_littleEndian(char *target_address, void *var_address,unsigned short int var_size) {//Assumed: var_address[0]  to var_address[var_size-1] are in big endian
+	void big_to_littleEndian(char *target_address, void *var_address,unsigned short int var_size) {
+		//Copies 'var_size' bytes from 'var_address' to 'target_address' (including 'target_address') in little endianess
+		//Assumed: var_address[0]  to var_address[var_size-1] are in big endian
 		char temp[var_size];
 		for (int i = 0; i < var_size; ++i) {
 			temp[i] = *((char*) (var_address) + i);
@@ -148,7 +153,7 @@ private:
 	//****************************************************************************************************//
 
 	//****************************************************************************************************//
-	//Prints to cout 'bytes_num' bytes as bits (starting and including start_addr)
+	//Prints to std out 'bytes_num' bytes as bits (starting and including start_addr)
 	//Assistant function
 	void print_memory_bytes(void *start_addr, unsigned short int bytes_num) {
 		unsigned char mask = 0b10000000;
@@ -175,11 +180,11 @@ private:
 
 	//****************************************************************************************************//
 	unsigned long int bytes_to_longInteger(char *bytes, int option) {
-		//This function converts the 4 bytes of 'bytes' into actual long integer
+		//This function converts the 4  char array bytes  into an actual long integer
 		//endianess is optional:
 		// 0 : little endian
 		// 1: big endian
-		// 2: 'bytes' is not manupulated at all
+		// 2: 'bytes' endianess is not manipulated at all
 		int size = sizeof(unsigned long int);
 		char temp[size];
 		for (int i = 0; i < size; ++i) {
@@ -200,7 +205,7 @@ private:
 
 		default:
 			cout << "bytes_to_longInteger ERROR : no such option " << option
-					<< endl;
+			<< endl;
 			return 0;
 		}
 
@@ -222,11 +227,12 @@ private:
 		case 1:
 			big_to_littleEndian(temp, bytes, size);
 			return *((unsigned short int*) (temp));
+
 		case 2:
 			return *((unsigned short int*) (temp));
 		default:
 			cout << "bytes_to_shortInteger ERROR : no such option " << option
-					<< endl;
+			<< endl;
 			return 0;
 		}
 
